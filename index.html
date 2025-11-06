@@ -2,393 +2,421 @@
 <html lang="es">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>FROJAX FREE CLICK</title>
-<link rel="icon" href="assets/Frojax-Logo2024.png">
 <style>
-  :root{ --bg:#0b0b0c; --card:#141417; --gold:#d4af37; --muted:#9a9aa0; --text:#f5f5f7; --panel:#1a1a20; --footer-h:56px; }
-  *{ box-sizing:border-box; }
-  html, body{ background:var(--bg); color:var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; margin:0; }
-  /* Natural layout: no fixed heights, no inner scrollbars */
-  .wrap{ max-width:860px; margin:0 auto; padding:12px; }
-  .card{ background:var(--card); border:1px solid #22252a; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35); padding:12px 12px 0; }
-  .header{ text-align:center; }
-  h1{ margin:6px 0 8px; color:var(--gold); font-weight:900; letter-spacing:.5px; font-size:clamp(18px,3.5vw,28px); }
-  .logo{ display:block; margin:6px auto 6px; max-height:90px; width:auto; object-fit:contain; filter:drop-shadow(0 0 6px rgba(0,0,0,.6)); }
-  .title-text{ text-align:center; color:var(--gold); font-weight:900; letter-spacing:.5px; font-size:clamp(20px,3.5vw,30px); margin-bottom:8px; }
-  /* Indicators */
-  .indicatorRow{ display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap; }
-  .pulse{ width:clamp(90px,20vw,130px); height:clamp(90px,20vw,130px); border-radius:50%; border:4px solid var(--gold); display:grid; place-items:center; position:relative; overflow:hidden; margin:6px 0; }
-  .pulseCore{ position:absolute; inset:10%; border-radius:50%; background:rgba(212,175,55,.08); }
-  .pulseRing{ position:absolute; inset:0; border-radius:50%; border:0 solid var(--gold); opacity:0; }
-  .pulse.glow{ box-shadow:0 0 36px rgba(212,175,55,.75), 0 0 90px rgba(212,175,55,.35) inset; }
-  @keyframes pulseGlow{ 0%{ transform:scale(.9); opacity:.65; border-width:10px } 100%{ transform:scale(1.35); opacity:0; border-width:0 } }
-  .ringAnim{ animation:pulseGlow 650ms ease-out; }
-  .bpmBig{ display:flex; align-items:baseline; justify-content:center; gap:10px; flex-wrap:wrap; }
-  .bpmValue{ font-size:clamp(56px,10vw,110px); font-weight:900; line-height:.9; text-align:center; }
-  .bpmUnit,.tsInline{ font-size:clamp(13px,2.5vw,18px); font-weight:700; letter-spacing:.6px; }
-  .tsInline{ color:var(--gold); }
-  /* Controls */
-  .controls{ display:grid; gap:12px; justify-items:center; text-align:center; }
-  .row{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; align-items:center; }
-  label{ color:var(--muted); font-size:13px; }
-  input[type="range"]{ width:min(520px,92%); }
-  .select{ background:#111; border:1px solid #2a2a33; color:#fff; padding:8px 10px; border-radius:10px; font-weight:700; }
-  .btn{ padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer; border:1px solid #2a2a33; text-transform:uppercase; background:#1d1d22; color:#fff; }
-  .btn.primary{ background:var(--gold); color:#141417; border-color:#000; }
-  .pillCircle{ width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid #2a2a33; background:#1a1a20; color:#ddd; font-weight:800; cursor:pointer; transition:all .2s }
-  .pillCircle.active{ background:var(--gold); color:#000; border-color:#000; }
-  .accentLabel{ text-align:center; margin-top:2px; color:var(--muted); font-size:12px; }
-  .accents{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:2px; }
-  .accentBtn{ width:38px; height:38px; border-radius:10px; border:1px solid #2a2a33; background:#1a1a20; color:#ddd; font-weight:800; cursor:pointer }
-  .accentBtn.on{ background:var(--gold); color:#141417; border-color:#000 }
-  /* In-flow trainer panel: expands beneath button and pushes content down */
-  .trainerWrap{ width:100%; display:flex; justify-content:center; }
-  .trainerPanel{ width:min(620px,96%); background:var(--panel); border:1px solid #2a2a33; border-radius:12px; padding:12px; margin-top:8px;
-                 overflow:hidden; max-height:0; opacity:0; transform:translateY(-6px); transition:max-height .25s ease, opacity .22s ease, transform .22s ease; }
-  .trainerPanel.open{ max-height:400px; opacity:1; transform:translateY(0); }
-  .trainer-help{ max-width:720px; width:min(100%,720px); margin:2px auto 8px; font-size:15px; line-height:1.45; color:var(--muted); }
-  .kv{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; }
-  .kv input[type="number"]{ width:90px; background:#111; border:1px solid #2a2a33; color:#fff; padding:7px 9px; border-radius:10px; font-weight:700; text-align:center; }
-  /* Footer (no overlap; page can scroll naturally if needed) */
-  .linkbar{ margin-top:16px; border-top:1px solid #222; padding:10px; display:flex; justify-content:center; gap:20px; background:#0f0f12; }
-  .linkbar a{ color:var(--gold); font-weight:800; text-decoration:none; font-size:clamp(13px,2vw,16px); }
+  :root{
+    --bg:#ffffff; --panel:#f6f6f8; --card:#ffffff; --muted:#5b5b61; --text:#111111; --gold:#d4af37;
+    --border:#e6e6ea; --black:#111111;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
+  .wrap{max-width:920px;margin:0 auto;padding:22px; display:flex; flex-direction:column; gap:16px; align-items:center}
 
-@media (max-width: 480px) {
-  .linkbar {
-    flex-wrap: nowrap;
-    gap: 14px;
-    padding: 8px 6px;
-  }
-  .linkbar a {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.1px;
-  }
-}
-@media (max-width: 360px) {
-  .linkbar {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .linkbar a {
-    flex: 1 1 100%;
-    text-align: center;
-  }
-}
+  /* Título “germánica” (fallbacks seguros) */
+  h1{font-size:28px;letter-spacing:.06em;font-weight:900;margin:6px 0 10px;text-align:center;
+     font-family:"Old English Text MT","Goudy Text MT","UnifrakturCook","UnifrakturMaguntia","Germania One",serif}
 
+  /* Logos superiores */
+  .logos-top{display:flex; gap:16px; align-items:center; justify-content:center; margin-bottom:10px}
+  .logos-top img{max-height:78px; width:auto}
+
+  /* Pantalla principal */
+  .display{ background:var(--card); border:2px solid var(--border); border-radius:20px;
+            padding:8px 16px; width:100%; min-height:120px;
+            display:flex; align-items:center; justify-content:center;
+            transition:background .06s ease, transform .06s ease }
+  .display.flash{ background:#000; color:#fff; transform:scale(1.003) }
+  .display.flash .playBtn{ background:#000; color:#fff; border-color:#000 }
+
+  /* Grilla interna: [PLAY] [BPM] [COMPÁS] */
+  .big{ width:100%; max-width:760px; display:grid;
+        grid-template-columns:auto 1fr auto; align-items:center; gap:10px; justify-items:center}
+
+  /* PLAY circular grande; activo = negro */
+  .playBtn{ border:2px solid var(--border); background:#fff; color:var(--black);
+            border-radius:9999px; padding:18px 22px; font-weight:900; cursor:pointer;
+            min-width:136px; text-align:center; transition:all .15s ease; font-size:20px }
+  .playBtn.on{ background:var(--black); color:#fff; border-color:var(--black) }
+
+  /* Números grandes */
+  .big .bpm, .big .sig{font-size:76px; font-weight:900; letter-spacing:0.02em; line-height:1; text-align:center}
+
+  /* Tarjetas y filas */
+  .grid{display:grid; gap:14px; width:100%}
+  @media(min-width:760px){ .grid.cols-2{grid-template-columns:1fr 1fr} }
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:16px; width:100%}
+  .row{display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap}
+  .titleRow{margin-bottom:8px}
+  label{font-size:12px; color:var(--muted); letter-spacing:.06em}
+
+  /* Controles */
+  input[type="range"]{width:100%}
+  select, input[type="number"], button{
+    background:#fff; color:var(--text); border:1px solid var(--border);
+    border-radius:12px; padding:10px 12px; font-weight:700;
+    text-align-last:center; /* centra el texto del select */
+  }
+  select:focus, input[type="number"]:focus, button:focus{outline:2px solid var(--gold); outline-offset:2px}
+  button{cursor:pointer; transition:background .15s ease, transform .02s ease, border-color .2s}
+  button:hover{background:#fafafa}
+  button:active{transform:translateY(1px)}
+
+  /* BPM predeterminados */
+  .circles{display:flex; flex-wrap:wrap; gap:10px; justify-content:center}
+  .circle{
+    width:58px; height:58px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
+    border:1px solid var(--border); background:#fff; cursor:pointer; font-weight:900; user-select:none
+  }
+  .circle.active{background:var(--black); color:#fff; border-color:var(--gold); border-width:2px}
+
+  /* Compás – botones grandes pero compactos */
+  .sigCtrl{display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; width:100%; max-width:480px; margin:0 auto}
+  .sigBox{background:#fff; border:1px solid var(--border); border-radius:14px; padding:10px;
+          display:grid; grid-template-columns:56px 1fr 56px; align-items:center; gap:8px}
+  .sigBox strong{font-size:14px; color:#444; text-align:center}
+  .sigNum{font-size:40px; font-weight:900; text-align:center}
+  .sigBtn{font-size:26px; font-weight:900; padding:14px 0}
+
+  /* Entrenador */
+  .switchRow{display:flex; align-items:center; justify-content:center; gap:12px}
+  .trainerPanel{margin-top:10px}
+  .hidden{display:none}
+
+  /* Links */
+  .links{font-size:12px; letter-spacing:.08em; margin-top:12px; text-align:center}
+  .links .link{color:#444; text-decoration:none; font-weight:800; margin:0 8px}
+  .links .link:hover{color:var(--gold)}
+  .links .dot{color:#bbb; margin:0 6px}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
-      <div class="header">
-        <img class="logo" src="assets/Frojax-Logo2024.png" alt="Frojax" />
-        <h1 class="title-text">FROJAX FREE CLICK</h1>
-        
-      </div>
 
-      <div class="indicatorRow">
-        <div class="pulse" id="pulse">
-          <div class="pulseCore"></div>
-          <div class="pulseRing" id="pulseRing"></div>
-        </div>
-        <div class="bpmBig">
-          <div id="bpmValue" class="bpmValue">120</div>
-          <div class="bpmUnit">BPM</div>
-          <div id="tsInline" class="tsInline">4/4</div>
-        </div>
-      </div>
+    <!-- Logos arriba -->
+    <div class="logos-top">
+      <img src="assets/Frojax-Logo2024.png" alt="FROJAX" />
+      <img src="assets/LogoMentoriasDeBateria-Logo.png" alt="Mentorías de Batería" />
+    </div>
 
-      <div class="controls">
+    <h1>FROJAX FREE CLICK</h1>
+
+    <!-- Pantalla -->
+    <div id="display" class="display">
+      <div class="big">
+        <button id="playBtn" class="playBtn" aria-pressed="false">PLAY</button>
+        <span id="bpmLabel" class="bpm">120</span>
+        <span id="sigLabel" class="sig">4/4</span>
+      </div>
+    </div>
+
+    <!-- Controles -->
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="row titleRow"><label for="bpm">BPM</label></div>
+        <div class="row" style="width:100%">
+          <input id="bpm" type="range" min="30" max="300" value="120" step="1" />
+        </div>
+        <div class="row titleRow"><label for="vol">VOLUMEN</label></div>
+        <div class="row" style="width:100%">
+          <input id="vol" type="range" min="0" max="1" step="0.001" value="0.5" />
+        </div>
+        <div class="row titleRow"><label>SONIDO / NOTAS POR PULSO</label></div>
         <div class="row">
-          <label for="bpm">Tempo</label>
-          <input id="bpm" type="range" min="30" max="240" value="120" />
-          <label for="volume">Volumen</label>
-          <input id="volume" type="range" min="0" max="100" value="85" />
-          <label for="soundType">Sonido</label>
-          <select id="soundType" class="select" aria-label="Tipo de sonido">
-            <option value="click" selected>Click</option>
+          <select id="soundSelect" aria-label="Sonido">
+            <option value="click">Click</option>
             <option value="beep">Beep</option>
             <option value="tick">Tick</option>
             <option value="cowbell">Cowbell</option>
           </select>
+          <select id="subdiv" aria-label="Subdivisión">
+            <option value="1">Negras</option>
+            <option value="2">Corcheas</option>
+            <option value="3">Tresillos</option>
+            <option value="4">Semicorcheas</option>
+          </select>
         </div>
-
-        <div class="row">
-          <div class="pillCircle" data-bpm="60">60</div>
-          <div class="pillCircle" data-bpm="80">80</div>
-          <div class="pillCircle" data-bpm="100">100</div>
-          <div class="pillCircle" data-bpm="125">125</div>
-          <div class="pillCircle" data-bpm="150">150</div>
-          <div class="pillCircle" data-bpm="175">175</div>
-          <div class="pillCircle" data-bpm="200">200</div>
-        </div>
-
-        <div class="row">
-          <button id="startStop" class="btn primary">Iniciar</button>
-          <button id="trainerToggle" class="btn" aria-expanded="false" aria-controls="trainerPanel">Modo Entrenamiento: OFF</button>
-        </div>
-
-        <!-- In-flow trainer: appears here and pushes content down -->
-        <div class="trainerWrap">
-          <div id="trainerPanel" class="trainerPanel" role="region" aria-label="Opciones de entrenamiento">
-            <div class="trainer-help">Práctica guiada que empieza en una velocidad y termina en otra, para una práctica enfocada en acondicionamiento y metas.</div>
-            <div class="kv" role="group" aria-label="Parámetros de entrenamiento">
-              <label for="startBpm">Inicio</label>
-              <input id="startBpm" type="number" min="30" max="240" value="80" />
-              <label for="endBpm">Final</label>
-              <input id="endBpm" type="number" min="30" max="240" value="140" />
-              <label for="durationMin">Duración (min)</label>
-              <input id="durationMin" type="number" min="1" max="60" value="2" />
-            </div>
-          </div>
-        </div>
-
-        <!-- Compás y acentos -->
-        <div class="row" style="flex-direction:column;margin-top:6px;">
-          <div class="accentLabel">Beats/Compás (Numerador)</div>
-          <div class="row">
-            <button id="beatsMinus" class="btn" aria-label="Disminuir beats">−</button>
-            <span id="beatsCount" class="btn">4</span>
-            <button id="beatsPlus" class="btn" aria-label="Aumentar beats">＋</button>
-          </div>
-
-          <div class="accentLabel" style="margin-top:8px;">Unidad del Tiempo (Denominador)</div>
-          <div class="row">
-            <button id="denMinus" class="btn" aria-label="Disminuir denominador">−</button>
-            <span id="denValue" class="btn">4</span>
-            <button id="denPlus" class="btn" aria-label="Aumentar denominador">＋</button>
-          </div>
-        </div>
-
-        <div class="row" style="flex-direction:column;margin-top:6px;">
-          <div class="accentLabel">Acentos</div>
-          <div id="accents" class="accents" aria-label="Acentos del compás"></div>
-        </div>
-
       </div>
 
-      <div class="linkbar">
-        <a href="https://www.instagram.com/frojax" target="_blank" rel="noopener">INSTAGRAM</a>
-        <a href="https://www.frojax.com/lecciones-y-clinicas" target="_blank" rel="noopener">LECCIONES</a>
-        <a href="https://www.frojax.com" target="_blank" rel="noopener">FROJAX.COM</a>
+      <div class="card">
+        <div class="row titleRow"><label>BPM PREDETERMINADOS</label></div>
+        <div class="circles" id="shortcutWrap"></div>
+        <div class="row titleRow" style="margin-top:6px"><label>COMPÁS</label></div>
+        <div class="sigCtrl">
+          <div class="sigBox">
+            <button id="beatsDec" class="sigBtn">−</button>
+            <div style="text-align:center">
+              <strong>TIEMPOS</strong>
+              <div id="beatsVal" class="sigNum">4</div>
+            </div>
+            <button id="beatsInc" class="sigBtn">+</button>
+          </div>
+          <div class="sigBox">
+            <button id="denDec" class="sigBtn">−</button>
+            <div style="text-align:center">
+              <strong>VALOR</strong>
+              <div id="denVal" class="sigNum">4</div>
+            </div>
+            <button id="denInc" class="sigBtn">+</button>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Entrenador -->
+    <div class="card" style="text-align:center">
+      <div class="switchRow titleRow">
+        <label>MODO ENTRENADOR</label>
+        <button id="trainerToggle" class="playBtn" aria-pressed="false">OFF</button>
+      </div>
+      <div id="trainerPanel" class="trainerPanel hidden" aria-hidden="true">
+        <div class="row">
+          <label for="tStart">INICIO (BPM)</label>
+          <input id="tStart" type="number" min="30" max="300" value="90" style="width:96px" />
+          <label for="tEnd">FINAL (BPM)</label>
+          <input id="tEnd" type="number" min="30" max="300" value="140" style="width:96px" />
+          <label for="tMins">DURACIÓN (min)</label>
+          <input id="tMins" type="number" min="1" max="90" value="5" style="width:96px" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="links">
+      <a class="link" href="https://instagram.com/frojax" target="_blank" rel="noopener">INSTAGRAM</a>
+      <span class="dot">•</span>
+      <a class="link" href="https://www.frojax.com/lecciones-y-clinicas" target="_blank" rel="noopener">MENTORÍAS / LECCIONES</a>
+      <span class="dot">•</span>
+      <a class="link" href="https://www.frojax.com" target="_blank" rel="noopener">FROJAX.COM</a>
+    </div>
+
   </div>
 
+<!-- ================== JS ================== -->
 <script>
-let audioCtx, masterGain;
-let nextNoteTime = 0.0;
-let currentBeat = 0;
-let lookahead = 25;
-let scheduleAheadTime = 0.10;
-let timerID;
-let isRunning = false;
+(function(){
+  // ----- ESTADO -----
+  const state = {
+    tocando:false,
+    bpm:120,
+    volumen:0.5,
+    tiempos:4,
+    valor:4,
+    paso:0,
+    subdiv:1, // 1=negras, 2=corcheas, 3=tresillos, 4=semicorcheas
+    audioCtx:null,
+    proximo:0,
+    ventana:0.1,   // segundos de anticipación
+    lookahead:25,  // ms entre ciclos del scheduler
+    timerID:null,
+    sonido:'click',
+    // Entrenador
+    entrenadorOn:false,
+    inicioBpm:90,
+    finBpm:140,
+    duracionMin:5,
+    inicioTiempoAudio:0
+  };
 
-// Time & accents
-let bpm = 120;
-let tsNumerator = 4;
-let tsDenominator = 4;
-let accents = [true, false, false, false];
+  // ----- DOM -----
+  const el = {
+    display: document.getElementById('display'),
+    playBtn: document.getElementById('playBtn'),
+    bpmLabel: document.getElementById('bpmLabel'),
+    sigLabel: document.getElementById('sigLabel'),
+    bpm: document.getElementById('bpm'),
+    vol: document.getElementById('vol'),
+    subdiv: document.getElementById('subdiv'),
+    soundSelect: document.getElementById('soundSelect'),
+    shortcuts: document.getElementById('shortcutWrap'),
+    // Compás
+    beatsVal: document.getElementById('beatsVal'),
+    denVal: document.getElementById('denVal'),
+    beatsInc: document.getElementById('beatsInc'),
+    beatsDec: document.getElementById('beatsDec'),
+    denInc: document.getElementById('denInc'),
+    denDec: document.getElementById('denDec'),
+    // Entrenador
+    trainerToggle: document.getElementById('trainerToggle'),
+    trainerPanel: document.getElementById('trainerPanel'),
+    tStart: document.getElementById('tStart'),
+    tEnd: document.getElementById('tEnd'),
+    tMins: document.getElementById('tMins'),
+  };
 
-// Trainer state
-let trainerOn = false;
-let trainerStartTS = null;
+  // ----- HELPERS -----
+  const clamp = (n,min,max)=> Math.max(min, Math.min(max, Number(n)));
 
-// UI refs
-const bpmSlider = document.getElementById('bpm');
-const bpmValue  = document.getElementById('bpmValue');
-const startStop = document.getElementById('startStop');
-const trainerToggle = document.getElementById('trainerToggle');
-const trainerPanel  = document.getElementById('trainerPanel');
-const volumeSlider = document.getElementById('volume');
-
-const beatsMinus = document.getElementById('beatsMinus');
-const beatsPlus  = document.getElementById('beatsPlus');
-const beatsCount = document.getElementById('beatsCount');
-
-const denMinus = document.getElementById('denMinus');
-const denPlus  = document.getElementById('denPlus');
-const denValue = document.getElementById('denValue');
-const tsInline = document.getElementById('tsInline');
-const accentsWrap= document.getElementById('accents');
-
-const startBpmEl  = document.getElementById('startBpm');
-const endBpmEl    = document.getElementById('endBpm');
-const durationMinEl  = document.getElementById('durationMin');
-
-const soundTypeSel = document.getElementById('soundType');
-const pulse = document.getElementById('pulse');
-const pulseRing = document.getElementById('pulseRing');
-
-function initAudio(){
-  if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    masterGain = audioCtx.createGain();
-    masterGain.gain.value = (Number(volumeSlider.value)||85) / 100;
-    masterGain.connect(audioCtx.destination);
+  function actualizarEtiquetas(){
+    el.bpmLabel.textContent = Math.round(state.bpm);
+    el.sigLabel.textContent = `${state.tiempos}/${state.valor}`;
+    el.beatsVal.textContent = state.tiempos;
+    el.denVal.textContent = state.valor;
   }
-}
-function updateShortcutStates(){
-  const val = Number(bpm);
-  document.querySelectorAll('.pillCircle').forEach(btn=>{
-    const target = Number(btn.getAttribute('data-bpm'));
-    btn.classList.toggle('active', target === val);
-  });
-}
-function setBpm(val){
-  bpm = Math.max(30, Math.min(240, Math.round(val)));
-  bpmSlider.value = bpm;
-  bpmValue.textContent = bpm;
-  updateShortcutStates();
-}
-function renderAccents(){
-  accentsWrap.innerHTML = "";
-  for(let i=0;i<tsNumerator;i++){
-    const b = document.createElement('button');
-    b.className = 'accentBtn' + (accents[i] ? ' on' : '');
-    b.textContent = (i+1);
-    b.setAttribute('aria-pressed', accents[i] ? 'true':'false');
-    b.addEventListener('click', ()=>{
-      accents[i] = !accents[i];
-      renderAccents();
-    });
-    accentsWrap.appendChild(b);
+
+  function flash(){
+    el.display.classList.add('flash');
+    clearTimeout(flash._t);
+    flash._t = setTimeout(()=> el.display.classList.remove('flash'), 80);
   }
-  beatsCount.textContent = String(tsNumerator);
-  denValue.textContent = String(tsDenominator);
-  tsInline.textContent = tsNumerator + "/" + tsDenominator;
-}
-function setNumerator(n){
-  tsNumerator = Math.max(1, Math.min(12, n));
-  const next = new Array(tsNumerator).fill(false);
-  for(let i=0;i<Math.min(accents.length, tsNumerator); i++){ next[i] = accents[i]; }
-  if(!next.some(Boolean)) next[0] = true;
-  accents = next; currentBeat = 0; renderAccents();
-}
-function setDenominator(d){
-  const steps = [1,2,4,8,16];
-  if(!steps.includes(d)){ d = steps.reduce((p,c)=> Math.abs(c-d)<Math.abs(p-d)?c:p, 4); }
-  tsDenominator = d; renderAccents();
-}
-function secondsPerBeat(){ return (60.0 / bpm) * (4.0 / tsDenominator); }
-function playClick(time, isAccent){
-  const type = soundTypeSel.value;
-  let dur = 0.05;
-  if(type === 'cowbell'){
-    let osc1 = audioCtx.createOscillator();
-    let osc2 = audioCtx.createOscillator();
-    let mix = audioCtx.createGain();
-    let gain = audioCtx.createGain();
-    const f1 = isAccent ? 880 : 780;
-    const f2 = isAccent ? 540 : 480;
-    osc1.type = 'square';   osc1.frequency.setValueAtTime(f1, time);
-    osc2.type = 'triangle'; osc2.frequency.setValueAtTime(f2, time);
-    gain.gain.setValueAtTime(0.001, time);
-    gain.gain.exponentialRampToValueAtTime(isAccent?0.9:0.6, time + 0.003);
-    gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.10);
-    osc1.connect(mix); osc2.connect(mix); mix.connect(gain).connect(masterGain);
-    osc1.start(time); osc2.start(time); osc1.stop(time + 0.12); osc2.stop(time + 0.12);
-    visual(isAccent, time); return;
-  }
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  let freq = 1300, oscType='square';
-  if(type==='click'){freq=isAccent?2000:1300;oscType='square';dur=0.05;}
-  if(type==='beep'){ freq=isAccent?1200:900; oscType='sine';  dur=0.06;}
-  if(type==='tick'){ freq=isAccent?1600:1000;oscType='square';dur=0.03;}
-  osc.type = oscType; osc.frequency.setValueAtTime(freq, time);
-  gain.gain.setValueAtTime(0.001, time);
-  gain.gain.exponentialRampToValueAtTime(isAccent?0.9:0.6, time + 0.002);
-  gain.gain.exponentialRampToValueAtTime(0.0001, time + dur);
-  osc.connect(gain).connect(masterGain); osc.start(time); osc.stop(time + dur);
-  visual(isAccent, time);
-}
-function visual(isAccent, time){
-  setTimeout(()=>{
-    pulse.classList.add('glow');
-    pulseRing.classList.remove('ringAnim'); void pulseRing.offsetWidth; pulseRing.classList.add('ringAnim');
-    setTimeout(()=>{ pulse.classList.remove('glow'); }, 140);
-  }, Math.max(0, (time - audioCtx.currentTime) * 1000));
-}
-function scheduleNote(beatNumber, time){
-  const isAccent = accents[beatNumber % tsNumerator] === true;
-  playClick(time, isAccent);
-}
-function nextNote(){ nextNoteTime += secondsPerBeat(); currentBeat = (currentBeat + 1) % tsNumerator; }
-function scheduler(){
-  while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime){
-    scheduleNote(currentBeat, nextNoteTime); nextNote();
-  }
-  timerID = setTimeout(scheduler, lookahead);
-}
-function start(){
-  initAudio(); audioCtx.resume();
-  if(isRunning) return; isRunning = TrueFalse(true);
-  startStop.textContent = 'Detener';
-  nextNoteTime = audioCtx.currentTime + 0.05; currentBeat = 0;
-  if(trainerOn){ trainerStartTS = null; }
-  scheduler();
-}
-function stop(){ isRunning = false; startStop.textContent = 'Iniciar'; clearTimeout(timerID); }
-function TrueFalse(v){ return v; }
 
-bpmSlider.addEventListener('input', e => setBpm(e.target.value));
-document.querySelectorAll('.pillCircle').forEach(btn=>{
-  btn.addEventListener('click', ()=> setBpm(Number(btn.getAttribute('data-bpm'))));
-});
-updateShortcutStates();
-startStop.addEventListener('click', ()=> isRunning ? stop() : start());
-volumeSlider.addEventListener('input', e => { initAudio(); masterGain.gain.value = (Number(e.target.value)||0)/100; });
-
-beatsMinus.addEventListener('click', ()=> setNumerator(tsNumerator-1));
-beatsPlus .addEventListener('click', ()=> setNumerator(tsNumerator+1));
-denMinus  .addEventListener('click', ()=> { const s=[1,2,4,8,16]; let i=s.indexOf(tsDenominator); if(i>0) setDenominator(s[i-1]); });
-denPlus   .addEventListener('click', ()=> { const s=[1,2,4,8,16]; let i=s.indexOf(tsDenominator); if(i<s.length-1) setDenominator(s[i+1]); });
-
-// Trainer toggle = in-flow expand/collapse, does NOT start audio
-trainerToggle.addEventListener('click', ()=>{
-  trainerOn = !trainerOn;
-  trainerToggle.textContent = trainerOn ? 'Modo Entrenamiento: ON' : 'Modo Entrenamiento: OFF';
-  trainerToggle.setAttribute('aria-expanded', String(trainerOn));
-  trainerPanel.classList.toggle('open', trainerOn);
-  trainerStartTS = null; // reset ramp state
-});
-
-// If parameters change while ON & running, restart ramp from Start BPM
-[startBpmEl, endBpmEl, durationMinEl].forEach(el => {
-  el.addEventListener('input', ()=>{
-    if(trainerOn && isRunning && audioCtx){ trainerStartTS = null; }
-  });
-});
-
-// Animation loop: apply ramp ONLY when trainerOn && running; panel is in flow so page shifts naturally
-function animate(){
-  if(trainerOn && isRunning && audioCtx){
-    if(trainerStartTS === null){
-      trainerStartTS = audioCtx.currentTime;
-      setBpm(Number(startBpmEl.value)||80);
+  function initAudio(){
+    if(!state.audioCtx){
+      state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-    const mins = Math.max(1, Math.min(60, Number(durationMinEl.value)||2));
-    const duration = mins * 60;
-    const t = Math.min(1, (audioCtx.currentTime - trainerStartTS) / duration);
-    const startB = Number(startBpmEl.value)||80;
-    const endB   = Number(endBpmEl.value)||140;
-    const cur = startB + (endB - startB) * t;
-    setBpm(cur);
-    if(t >= 1){ trainerOn = false; trainerPanel.classList.remove('open'); trainerToggle.textContent = 'Modo Entrenamiento: OFF'; trainerToggle.setAttribute('aria-expanded','false'); trainerStartTS=null; }
-  } else { trainerStartTS = null; }
-  requestAnimationFrame(animate);
-}
-requestAnimationFrame(animate);
+  }
 
-// Initialize
-setBpm(120); setNumerator(4); setDenominator(4);
-// Unlock Audio on first user gesture
-['touchstart','mousedown','keydown'].forEach(evt=>{
-  window.addEventListener(evt, ()=>{ if(audioCtx && audioCtx.state==='suspended'){ audioCtx.resume(); } }, {passive:true});
-});
+  function intervaloS(){
+    // duración de una negra
+    const negra = 60 / state.bpm;
+    // ajusta por denominador (ej: 6/8 => valor=8)
+    const pulso = negra * (4 / state.valor);
+    // subdivisión (tresillos = 3, etc.)
+    return pulso / state.subdiv;
+  }
+
+  function programarTick(t){
+    const ticksPorCompas = state.tiempos * state.subdiv;
+    const pasoEnCompas = state.paso % ticksPorCompas;
+    const esPulso = (pasoEnCompas % state.subdiv) === 0;
+    const acento = (pasoEnCompas === 0);
+
+    reproducir(t, {acento, esPulso});
+    if(esPulso) requestAnimationFrame(flash);
+
+    state.paso = (state.paso + 1) % ticksPorCompas;
+
+    // Entrenador: si está ON y suena, mueve el BPM
+    if(state.entrenadorOn && state.tocando){
+      const elapsed = (state.audioCtx.currentTime - state.inicioTiempoAudio);
+      const total = state.duracionMin * 60;
+      const p = Math.min(1, total>0 ? (elapsed/total) : 1);
+      const nextBpm = state.inicioBpm + (state.finBpm - state.inicioBpm)*p;
+      setBpm(nextBpm);
+    }
+  }
+
+  function scheduler(){
+    while(state.proximo < state.audioCtx.currentTime + state.ventana){
+      programarTick(state.proximo);
+      state.proximo += intervaloS();
+    }
+    state.timerID = setTimeout(scheduler, state.lookahead);
+  }
+
+  // ----- SONIDO -----
+  function reproducir(time, {acento=false, esPulso=false}={}){
+    const ctx = state.audioCtx; if(!ctx) return;
+    const vol = ctx.createGain();
+    vol.gain.value = acento ? state.volumen : state.volumen * (esPulso ? 0.8 : 0.55);
+    vol.connect(ctx.destination);
+
+    const s = state.sonido;
+    if(s === 'click'){
+      const o = ctx.createOscillator(); o.type='square'; o.frequency.setValueAtTime(acento?2000:1500, time);
+      const env = ctx.createGain(); env.gain.setValueAtTime(0.001, time);
+      env.gain.exponentialRampToValueAtTime(1.0, time+0.001);
+      env.gain.exponentialRampToValueAtTime(0.0001, time+0.03);
+      o.connect(env).connect(vol); o.start(time); o.stop(time+0.04);
+    } else if(s === 'beep'){
+      const o = ctx.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(acento?1200:880, time);
+      const env = ctx.createGain(); env.gain.setValueAtTime(0.001, time);
+      env.gain.exponentialRampToValueAtTime(1.0, time+0.002);
+      env.gain.exponentialRampToValueAtTime(0.0001, time+0.08);
+      o.connect(env).connect(vol); o.start(time); o.stop(time+0.09);
+    } else if(s === 'tick'){
+      const bufferSize = 0.02 * ctx.sampleRate;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let i=0;i<bufferSize;i++){ data[i] = (Math.random()*2-1) * Math.pow(1-i/bufferSize, 6); }
+      const src = ctx.createBufferSource(); src.buffer = buffer; src.connect(vol); src.start(time);
+    } else if(s === 'cowbell'){
+      const o1 = ctx.createOscillator(), o2 = ctx.createOscillator();
+      o1.type='square'; o2.type='square';
+      o1.frequency.setValueAtTime(acento?800:700, time);
+      o2.frequency.setValueAtTime(acento?1200:1100, time);
+      const mix = ctx.createGain(); const env = ctx.createGain(); env.gain.setValueAtTime(0.001, time);
+      env.gain.exponentialRampToValueAtTime(1.0, time+0.001);
+      env.gain.exponentialRampToValueAtTime(0.0001, time+0.06);
+      o1.connect(mix); o2.connect(mix); mix.connect(env).connect(vol); o1.start(time); o2.start(time); o1.stop(time+0.08); o2.stop(time+0.08);
+    }
+  }
+
+  // ----- TRANSPORTE -----
+  function play(){
+    initAudio();
+    state.tocando = true;
+    el.playBtn.classList.add('on');
+    el.playBtn.textContent = 'PAUSA';
+    state.paso = 0;
+    state.proximo = state.audioCtx.currentTime + 0.05;
+    state.inicioTiempoAudio = state.audioCtx.currentTime;
+    scheduler();
+  }
+  function stop(){
+    state.tocando = false;
+    el.playBtn.classList.remove('on');
+    el.playBtn.textContent = 'PLAY';
+    clearTimeout(state.timerID); state.timerID = null;
+  }
+  function togglePlay(){ state.tocando ? stop() : play(); }
+
+  function setBpm(v){
+    state.bpm = clamp(v, 30, 300);
+    el.bpm.value = state.bpm;
+    actualizarEtiquetas();
+    resaltarAtajo(state.bpm);
+  }
+
+  function resaltarAtajo(bpm){
+    const nodes = el.shortcuts.querySelectorAll('.circle');
+    nodes.forEach(n=> n.classList.toggle('active', Number(n.dataset.bpm) === Math.round(bpm)));
+  }
+
+  // ----- BPM predeterminados -----
+  for(let v=50; v<=200; v+=25){
+    const b = document.createElement('button');
+    b.className = 'circle'; b.textContent = v; b.dataset.bpm = v;
+    b.addEventListener('click', ()=> setBpm(v));
+    el.shortcuts.appendChild(b);
+  }
+  resaltarAtajo(state.bpm);
+
+  // ----- Eventos UI -----
+  el.playBtn.addEventListener('click', togglePlay);
+  el.bpm.addEventListener('input', e=> setBpm(e.target.value));
+  el.vol.addEventListener('input', e=> state.volumen = Number(e.target.value));
+  el.subdiv.addEventListener('change', e=> state.subdiv = Number(e.target.value));
+  el.soundSelect.addEventListener('change', e=> state.sonido = e.target.value);
+
+  // Compás
+  function setTiempos(v){ state.tiempos = clamp(v,1,12); actualizarEtiquetas(); }
+  function setValor(v){ state.valor = [2,4,8,16].includes(Number(v)) ? Number(v) : state.valor; actualizarEtiquetas(); }
+  const nextDen = v => (v===2?4 : v===4?8 : v===8?16 : 16);
+  const prevDen = v => (v===16?8 : v===8?4 : v===4?2 : 2);
+  el.beatsInc.addEventListener('click', ()=> setTiempos(state.tiempos+1));
+  el.beatsDec.addEventListener('click', ()=> setTiempos(state.tiempos-1));
+  el.denInc.addEventListener('click', ()=> setValor(nextDen(state.valor)));
+  el.denDec.addEventListener('click', ()=> setValor(prevDen(state.valor)));
+
+  // Entrenador ON/OFF (no inicia el metrónomo)
+  function toggleTrainer(){
+    state.entrenadorOn = !state.entrenadorOn;
+    el.trainerToggle.classList.toggle('on', state.entrenadorOn);
+    el.trainerToggle.textContent = state.entrenadorOn ? 'ON' : 'OFF';
+    el.trainerPanel.classList.toggle('hidden', !state.entrenadorOn);
+    if(state.entrenadorOn){
+      state.inicioBpm = clamp(el.tStart.value, 30, 300);
+      state.finBpm = clamp(el.tEnd.value, 30, 300);
+      state.duracionMin = clamp(el.tMins.value, 1, 240);
+      setBpm(state.inicioBpm);
+    }
+  }
+  el.trainerToggle.addEventListener('click', toggleTrainer);
+
+  actualizarEtiquetas();
+})();
 </script>
 </body>
 </html>
